@@ -8,7 +8,7 @@ This is a local chatbot application that lets you ask questions about your own C
 - Ask questions about the content of your files
 - Keep chat memory separate for CSV and PDF modes (with an option to clear memory)
 - See a list of uploaded files and debug information
-- Use the app completely offline—no data leaves your computer
+
 
 ## Features
 
@@ -99,6 +99,12 @@ streamlit run app.py
 - Ask questions about user manuals or product sheets
 - Summarize internal documents or reports
 - Explore structured datasets in a conversational way
+
+## Screenshot
+
+Below is a screenshot of the app in action:
+
+![Local RAG Chatbot UI](LocalRAG.PNG)
 
 ## Clearing Memory
 
