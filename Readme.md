@@ -1,93 +1,109 @@
-# LocalRAG: Flexible Retrieval-Augmented Generation Chatbot
+# Local RAG Chatbot (CSV & PDF) with Upload, Memory & UI
 
-This project is a Retrieval-Augmented Generation (RAG) chatbot that can answer questions using information from both CSV and PDF files. It leverages [LangChain](https://python.langchain.com/) with Ollama LLM and Chroma vector store for semantic search and response generation.
+This is a local chatbot application that lets you ask questions about your own CSV and PDF files. It runs entirely offline and uses LangChain, ChromaDB, Ollama, and Streamlit. You can upload files, chat with your data, and keep separate chat memory for CSVs and PDFs.
+
+## What You Can Do
+
+- Upload CSV and PDF files through the web interface
+- Ask questions about the content of your files
+- Keep chat memory separate for CSV and PDF modes (with an option to clear memory)
+- See a list of uploaded files and debug information
+- Use the app completely offline—no data leaves your computer
 
 ## Features
 
-- **Semantic Search:** Retrieves the most relevant information for a given question from CSV or PDF files.
-- **LLM-Powered Answers:** Uses a local Ollama LLM to generate expert answers based on retrieved data.
-- **Interactive CLI:** Ask questions in a terminal loop and get instant, context-aware responses.
-- **Flexible Data Sources:** Supports CSV files (in `local_csv/`) and PDF files (in `local_pdf/`), including recursive folder search.
-- **No Duplicate Embeddings:** Tracks processed files to avoid re-embedding the same data.
-- **General Purpose:** Not limited to restaurant reviews—add any CSV or PDF files and ask questions about their content.
+- **File Upload:** Add new PDFs and CSVs at any time using the UI.
+- **Chat Memory:** The app keeps separate chat histories for PDFs and CSVs. You can clear them whenever you want.
+- **Universal CSV Support:** Works with any CSV file by merging all columns into searchable text.
+- **ChromaDB:** Stores document embeddings locally for fast retrieval.
+- **Chat Interface:** Uses Streamlit for a simple, interactive chat experience.
+- **Debugging Panel:** Shows internal logs, including your last input and prompt.
 
-## Project Structure
+## Technology Stack
 
-```
-.
-├── main.py                # Main chatbot loop
-├── vector.py              # Vector store and retriever setup
-├── local_csv/             # Folder for CSV files (can contain subfolders)
-├── local_pdf/             # Folder for PDF files (can contain subfolders)
-├── chroma_csv_db/         # Chroma vector database for CSV files
-├── chroma_pdf_db/         # Chroma vector database for PDF files
-├── csv_files_record.json  # Tracks processed CSV files
-├── pdf_files_record.json  # Tracks processed PDF files
-├── .gitignore
-└── README.md
-```
-
-## Setup Instructions
-
-1. **Clone the repository**
-   ```sh
-   git clone https://github.com/your-username/LocalRAG.git
-   cd LocalRAG
-   ```
-
-2. **Create and activate a virtual environment**
-   ```sh
-   python -m venv rag_evn
-   .\rag_evn\Scripts\activate
-   ```
-
-3. **Install dependencies**
-   ```sh
-   pip install -r requirements.txt
-   # For PDF support:
-   pip install langchain-community
-   ```
-
-4. **Prepare your data files**
-   - Place CSV files (with columns like `Title`, `Review`, `Rating`, `Date` or any other structure) in the `local_csv/` folder (subfolders allowed).
-   - Place PDF files in the `local_pdf/` folder (subfolders allowed).
-
-5. **Run the chatbot**
-   ```sh
-   python main.py
-   ```
-
-## How It Works
-
-- **vector.py:**  
-  Recursively loads documents from CSV and PDF files, embeds them, and stores them in separate Chroma vector databases. Tracks processed files to avoid duplicates. Provides retrievers for both collections.
-
-- **main.py:**  
-  Prompts the user to select the data source (CSV or PDF), retrieves relevant documents using the chosen retriever, and generates an answer using the LLM.
-
-## Example Usage
-
-```
-Choose data source for retrieval:
-1. CSV reviews
-2. PDF reviews
-Enter 1 or 2: 2
-
------------------------------New prompt-----------------------------
-Please enter your question (q to quit): What does the contract say about payment terms?
-[LLM responds with a summary based on relevant PDF content]
-```
+- Streamlit for the user interface
+- LangChain for prompt chaining and retrieval
+- Chroma for the local vector database
+- Ollama for running local LLM and embedding models
 
 ## Requirements
 
-- Python 3.8+
-- [Ollama](https://ollama.com/) running locally with the `llama3.2` and `mxbai-embed-large` models
-- [LangChain](https://python.langchain.com/)
-- [Chroma](https://www.trychroma.com/)
-- [langchain-community](https://pypi.org/project/langchain-community/) (for PDF support)
+### Install Ollama and Models
 
-## Notes
+1. Download and install Ollama: https://ollama.com/download
+2. Pull the required models:
+   ```sh
+   ollama pull llama3
+   ollama pull mxbai-embed-large
+   ```
 
-- The first run will create local vector databases from your CSV and/or PDF files.
-- New files added to `local_csv/` or `local_pdf/` will be automatically embedded on the next run.
-- You can customize the prompt in `main.py` for different domains or styles.
+### Python Dependencies
+
+Install all dependencies with:
+```sh
+pip install -r requirements.txt
+```
+
+Your `requirements.txt` should include:
+```
+streamlit
+pandas
+langchain
+langchain-core
+langchain-community
+langchain-chroma
+ollama
+pypdf
+```
+
+## How It Works
+
+- Choose either PDF or CSV mode from the sidebar.
+- Upload your documents through the interface, or add them directly to the `local_pdf/` or `local_csv/` folders.
+- The app will index your files and store their embeddings in local ChromaDB folders.
+- Ask questions in the chat. The app retrieves relevant content and generates a response.
+- Chat memory is saved separately for CSV and PDF modes and can be cleared at any time.
+
+## Folder Structure
+
+```
+.
+├── app.py                  # Main app file
+├── local_csv/              # Uploaded CSV files
+├── local_pdf/              # Uploaded PDF files
+├── chroma_csv_db/          # Chroma vector DB for CSVs
+├── chroma_pdf_db/          # Chroma vector DB for PDFs
+├── csv_files_record.json   # Tracks CSV files
+├── pdf_files_record.json   # Tracks PDF files
+└── README.md
+```
+
+## Running the App
+
+Start the app with:
+```sh
+streamlit run app.py
+```
+
+## What You See in the UI
+
+- Upload PDFs or CSVs
+- See a list of all indexed files
+- Ask questions and get context-aware answers
+- Clear chat memory for either mode
+- View debug logs for troubleshooting
+
+## Example Use Cases
+
+- Analyze customer reviews or feedback forms
+- Ask questions about user manuals or product sheets
+- Summarize internal documents or reports
+- Explore structured datasets in a conversational way
+
+## Clearing Memory
+
+Use the "Clear Chat Memory" button to erase the chat history for either CSV or PDF mode.
+
+## Privacy
+
+This app runs entirely on your computer. No files or data are sent anywhere. You have full control over your models and your data.
